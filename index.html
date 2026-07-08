@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Netmix — Um mix de filmes, séries e TV</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-0:#0a0c10;
+    --bg-1:#12151b;
+    --bg-2:#181c24;
+    --line:#242a34;
+    --text-hi:#f2f4f7;
+    --text-mid:#a6adba;
+    --text-low:#6b7280;
+    --brand-red:#ea1f27;
+    --signal:#33ffb0;
+    --signal-dim:rgba(51,255,176,.14);
+    --radius:16px;
+    --font-display:'Space Grotesk', sans-serif;
+    --font-body:'Inter', sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg-0);
+    color:var(--text-hi);
+    font-family:var(--font-body);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  a{color:inherit;text-decoration:none;}
+  img,svg{display:block;}
+  .wrap{max-width:1140px;margin:0 auto;padding:0 24px;}
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;}}
+
+  /* background texture */
+  body::before{
+    content:"";
+    position:fixed;inset:0;
+    background:
+      radial-gradient(680px 420px at 82% -6%, rgba(234,31,39,.14), transparent 60%),
+      radial-gradient(640px 460px at 8% 18%, var(--signal-dim), transparent 60%);
+    pointer-events:none;
+    z-index:0;
+  }
+
+  /* ---------- HEADER ---------- */
+  header{
+    position:sticky;top:0;z-index:50;
+    background:rgba(10,12,16,.72);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:18px 24px;
+  }
+  .logo{
+    font-family:var(--font-display);
+    font-weight:700;
+    font-size:22px;
+    letter-spacing:-.02em;
+    display:flex;align-items:center;gap:2px;
+  }
+  .logo .net{
+    background:var(--brand-red);
+    color:#fff;
+    padding:2px 8px 3px;
+    border-radius:4px;
+  }
+  .logo .mix{color:var(--text-hi);padding-left:2px;}
+  .nav-cta{
+    font-size:14px;
+    font-weight:600;
+    color:var(--text-mid);
+    padding:9px 18px;
+    border:1px solid var(--line);
+    border-radius:999px;
+    transition:.2s ease;
+  }
+  .nav-cta:hover{border-color:var(--signal);color:var(--signal);}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    position:relative;z-index:1;
+    padding:40px 24px 60px;
+  }
+  .hero-inner{
+    max-width:1140px;margin:0 auto;
+    display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center;
+  }
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:12.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+    color:var(--signal);
+    background:var(--signal-dim);
+    border:1px solid rgba(51,255,176,.3);
+    padding:7px 14px;border-radius:999px;
+    margin-bottom:22px;
+  }
+  .eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--signal);box-shadow:0 0 10px var(--signal);animation:pulse 1.8s ease-in-out infinite;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.35;}}
+  h1{
+    font-family:var(--font-display);
+    font-size:clamp(34px,4.6vw,54px);
+    line-height:1.06;
+    font-weight:700;
+    letter-spacing:-.02em;
+    margin-bottom:22px;
+  }
+  h1 .accent{color:var(--signal);}
+  .hero p.lead{
+    font-size:17.5px;
+    color:var(--text-mid);
+    max-width:480px;
+    margin-bottom:36px;
+  }
+  .hero p.lead b{color:var(--text-hi);font-weight:600;}
+  .btn{
+    display:inline-flex;align-items:center;gap:10px;
+    font-family:var(--font-body);
+    font-weight:700;
+    font-size:16px;
+    padding:16px 28px;
+    border-radius:12px;
+    cursor:pointer;
+    border:none;
+    transition:transform .18s ease, box-shadow .18s ease;
+  }
+  .btn-primary{
+    background:var(--signal);
+    color:#04140d;
+    box-shadow:0 0 0 0 rgba(51,255,176,.5);
+  }
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 30px -8px rgba(51,255,176,.55);}
+  .btn-primary svg{width:18px;height:18px;}
+  .hero-note{
+    margin-top:16px;
+    font-size:13px;
+    color:var(--text-low);
+    display:flex;align-items:center;gap:8px;
+  }
+
+  /* ---------- HERO VISUAL: leque de gêneros + anéis de sinal ---------- */
+  .hero-visual{
+    position:relative;
+    height:440px;
+    display:flex;align-items:flex-end;justify-content:center;
+  }
+  
+  .hero-tv{
+    width:100%;
+    max-width:620px;
+    border-radius:20px;
+    display:block;
+    box-shadow:0 30px 70px rgba(0,0,0,.45);
+  }
+
+  /* anéis de transmissão pulsando atrás do leque — remete à "estabilidade de sinal" */
+  .broadcast{
+    position:absolute;left:50%;bottom:64px;
+    width:10px;height:10px;
+    transform:translateX(-50%);
+    z-index:0;
+  }
+  .ring{
+    position:absolute;left:50%;top:50%;
+    width:10px;height:10px;border-radius:50%;
+    border:1.5px solid var(--signal);
+    transform:translate(-50%,-50%);
+    animation:ring-out 3.6s cubic-bezier(.2,.6,.4,1) infinite;
+    opacity:0;
+  }
+  .ring:nth-child(2){animation-delay:1.2s;}
+  .ring:nth-child(3){animation-delay:2.4s;}
+  @keyframes ring-out{
+    0%{width:10px;height:10px;opacity:.55;border-color:var(--signal);}
+    70%{opacity:.12;}
+    100%{width:420px;height:420px;opacity:0;border-color:var(--brand-red);}
+  }
+
+  /* leque de cartões */
+  .card-fan{
+    position:relative;
+    width:230px;height:340px;
+    z-index:1;
+    animation:fan-breathe 6s ease-in-out infinite;
+  }
+  @keyframes fan-breathe{0%,100%{transform:rotate(0deg);}50%{transform:rotate(1.2deg);}}
+  .g-card{
+    position:absolute;left:50%;bottom:0;
+    width:132px;height:190px;
+    transform-origin:50% 100%;
+    border-radius:14px;
+    padding:14px;
+    display:flex;flex-direction:column;justify-content:space-between;
+    box-shadow:0 20px 40px -18px rgba(0,0,0,.65);
+    border:1px solid rgba(255,255,255,.08);
+    animation:card-bob 3.4s ease-in-out infinite;
+  }
+  @keyframes card-bob{0%,100%{bottom:0;}50%{bottom:10px;}}
+  .g-card .eyebrow-mini{
+    font-size:9.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+    color:rgba(255,255,255,.75);
+  }
+  .g-card .g-icon{width:26px;height:26px;stroke:rgba(255,255,255,.9);align-self:flex-start;}
+  .g-card .g-title{font-family:var(--font-display);font-size:13px;font-weight:700;color:#fff;}
+  .g-card.c1{background:linear-gradient(150deg,#3a1c22,#1c0d10);transform:translateX(-50%) rotate(-22deg) translateY(6px);z-index:1;animation-delay:0s;}
+  .g-card.c2{background:linear-gradient(150deg,#26343f,#101a20);transform:translateX(-50%) rotate(-11deg) translateY(-4px);z-index:2;animation-delay:.6s;}
+  .g-card.c3{background:linear-gradient(150deg,#2b2440,#14101f);transform:translateX(-50%) rotate(0deg) translateY(-14px);z-index:4;animation-delay:1.2s;}
+  .g-card.c4{background:linear-gradient(150deg,#233726,#0f1a10);transform:translateX(-50%) rotate(11deg) translateY(-4px);z-index:2;animation-delay:.6s;}
+  .g-card.c5{background:linear-gradient(150deg,#3a2c14,#1c1608);transform:translateX(-50%) rotate(22deg) translateY(6px);z-index:1;animation-delay:0s;}
+  .g-card.c3{width:150px;height:214px;border-color:rgba(51,255,176,.4);animation-duration:3.8s;}
+  .g-card.c3 .g-icon{stroke:var(--signal);}
+
+  /* cartão central alterna entre gêneros — mostra o "mix" acontecendo de verdade */
+  .mix-slot{position:relative;flex:1;}
+  .mix-item{
+    position:absolute;inset:0;
+    display:flex;flex-direction:column;justify-content:space-between;
+    opacity:0;
+    animation:mix-cycle 12s infinite;
+  }
+  .mix-item:nth-child(1){animation-delay:0s;}
+  .mix-item:nth-child(2){animation-delay:4s;}
+  .mix-item:nth-child(3){animation-delay:8s;}
+  @keyframes mix-cycle{
+    0%{opacity:0;transform:translateY(6px);}
+    4%{opacity:1;transform:translateY(0);}
+    29%{opacity:1;transform:translateY(0);}
+    33%{opacity:0;transform:translateY(-6px);}
+    100%{opacity:0;}
+  }
+  .now-tag{
+    position:absolute;top:12px;right:12px;
+    display:flex;align-items:center;gap:5px;
+    font-size:8.5px;font-weight:700;letter-spacing:.05em;
+    color:var(--signal);
+  }
+  .now-tag .d{width:5px;height:5px;border-radius:50%;background:var(--signal);animation:pulse 1.6s ease-in-out infinite;}
+
+  .hud{
+    position:absolute;
+    background:rgba(18,21,27,.85);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:8px 12px;
+    font-size:11px;font-weight:600;color:var(--text-mid);
+    display:flex;align-items:center;gap:7px;
+    backdrop-filter:blur(6px);
+    box-shadow:0 12px 30px -14px rgba(0,0,0,.6);
+    animation:float 4s ease-in-out infinite;
+    z-index:5;
+  }
+  .hud svg{width:15px;height:15px;stroke:var(--signal);flex-shrink:0;}
+  .hud b{color:var(--text-hi);}
+  .hud-1{top:6%;left:0;animation-delay:0s;}
+  .hud-2{top:2%;right:2%;animation-delay:.8s;}
+  @keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-7px);}}
+  @media(max-width:880px){.hud{display:none;}.hero-visual{height:360px;}.card-fan{width:190px;height:280px;}.g-card{width:108px;height:156px;}.g-card.c3{width:124px;height:176px;}}
+
+
+  /* section label pattern */
+  .section-head{max-width:600px;margin:0 auto 52px;text-align:center;}
+  .section-head .kicker{
+    font-size:12.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--signal);
+    margin-bottom:12px;
+  }
+  .section-head h2{
+    font-family:var(--font-display);
+    font-size:clamp(26px,3.2vw,36px);
+    font-weight:700;letter-spacing:-.015em;
+    margin-bottom:12px;
+  }
+  .section-head p{color:var(--text-mid);font-size:16px;}
+
+  section{position:relative;z-index:1;padding:88px 0;}
+  .divider{height:1px;background:linear-gradient(90deg,transparent,var(--line),transparent);}
+
+  /* ---------- DIFERENCIAIS ---------- */
+  .features{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+  .feature-card{
+    background:var(--bg-1);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:32px 26px;
+    transition:.25s ease;
+  }
+  .feature-card:hover{border-color:rgba(51,255,176,.4);transform:translateY(-4px);}
+  .feature-icon{
+    width:48px;height:48px;border-radius:12px;
+    background:var(--signal-dim);
+    display:flex;align-items:center;justify-content:center;
+    margin-bottom:20px;
+  }
+  .feature-icon svg{width:24px;height:24px;stroke:var(--signal);}
+  .feature-card h3{font-family:var(--font-display);font-size:18px;font-weight:600;margin-bottom:10px;}
+  .feature-card p{color:var(--text-mid);font-size:14.5px;}
+
+  /* ---------- OFERTA ---------- */
+  .offer-wrap{display:flex;justify-content:center;}
+  .offer-card{
+    position:relative;
+    width:100%;max-width:460px;
+    background:linear-gradient(180deg,var(--bg-1),var(--bg-2));
+    border:1px solid rgba(51,255,176,.35);
+    border-radius:20px;
+    padding:40px 36px 36px;
+    box-shadow:0 40px 90px -40px rgba(51,255,176,.18);
+  }
+  .offer-badge{
+    position:absolute;top:-13px;left:50%;transform:translateX(-50%);
+    background:var(--brand-red);color:#fff;
+    font-size:11.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+    padding:6px 16px;border-radius:999px;
+  }
+  .offer-card h3{font-family:var(--font-display);font-size:20px;font-weight:600;text-align:center;color:var(--text-mid);margin-bottom:6px;margin-top:6px;}
+  .price{text-align:center;margin-bottom:6px;}
+  .price .num{font-family:var(--font-display);font-size:52px;font-weight:700;color:var(--text-hi);}
+  .price .cents{font-size:24px;font-weight:600;color:var(--text-mid);}
+  .price-sub{text-align:center;font-size:13.5px;color:var(--text-low);margin-bottom:28px;}
+  .offer-list{list-style:none;margin-bottom:30px;}
+  .offer-list li{
+    display:flex;align-items:flex-start;gap:10px;
+    font-size:14.5px;color:var(--text-mid);
+    padding:9px 0;
+    border-bottom:1px solid var(--line);
+  }
+  .offer-list li:last-child{border-bottom:none;}
+  .offer-list svg{width:18px;height:18px;flex-shrink:0;stroke:var(--signal);margin-top:1px;}
+  .offer-list b{color:var(--text-hi);font-weight:600;}
+  .btn-block{width:100%;justify-content:center;}
+  .offer-foot{text-align:center;font-size:12.5px;color:var(--text-low);margin-top:14px;}
+
+  /* ---------- PASSOS ---------- */
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;counter-reset:step;}
+  .step{position:relative;padding:32px 24px 28px;background:var(--bg-1);border:1px solid var(--line);border-radius:var(--radius);}
+  .step-num{
+    font-family:var(--font-display);
+    font-size:14px;font-weight:700;color:var(--signal);
+    border:1px solid rgba(51,255,176,.35);
+    width:32px;height:32px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    margin-bottom:18px;
+  }
+  .step h3{font-family:var(--font-display);font-size:17px;font-weight:600;margin-bottom:8px;}
+  .step p{color:var(--text-mid);font-size:14.5px;}
+  .step-connector{display:none;}
+
+  /* ---------- FOOTER ---------- */
+  footer{
+    border-top:1px solid var(--line);
+    padding:40px 0 28px;
+    position:relative;z-index:1;
+  }
+  .footer-grid{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:20px;margin-bottom:24px;}
+  .footer-logo{font-family:var(--font-display);font-weight:700;font-size:18px;}
+  .footer-logo .net{color:var(--brand-red);}
+  .footer-note{color:var(--text-low);font-size:13px;max-width:420px;line-height:1.6;}
+  .footer-bottom{
+    color:var(--text-low);font-size:12.5px;
+    display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;
+    padding-top:22px;border-top:1px solid var(--line);
+  }
+  .compat-tags{display:flex;gap:8px;flex-wrap:wrap;}
+  .compat-tags span{border:1px solid var(--line);padding:4px 10px;border-radius:999px;}
+
+  @media(max-width:880px){
+    .hero-inner{grid-template-columns:1fr;}
+    .hero{padding:64px 20px 56px;}
+    .features,.steps{grid-template-columns:1fr;}
+    .footer-bottom{flex-direction:column;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="nav wrap">
+    <div class="logo"><span class="net">Net</span><span class="mix">mix</span></div>
+    <a class="nav-cta" href="https://wa.me/5527992874891?text=Ol%C3%A1,%20quero%20solicitar%20meu%20acesso%20demonstrativo%20de%202%20horas%20da%20Netmix!" target="_blank" rel="noopener">Falar no WhatsApp</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div>
+      <span class="eyebrow"><span class="dot"></span> Transmissão ao vivo, sem travar</span>
+      <h1>Entretenimento em <span class="accent">Full HD</span>, direto na sua tela</h1>
+      <p class="lead">Filmes, séries e TV em um único lugar, com <b>transmissão estável via internet</b> e zero travamento — mesmo nos horários de pico.</p>
+      <a class="btn btn-primary" href="https://wa.me/5527992874891?text=Ol%C3%A1,%20quero%20solicitar%20meu%20acesso%20demonstrativo%20de%202%20horas%20da%20Netmix!" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3l14 9-14 9V3z"/></svg>
+        Testar 2 horas grátis agora
+      </a>
+      <div class="hero-note">Sem compromisso · Ativação por WhatsApp em minutos</div>
+    </div>
+
+    <div class="hero-visual">
+    <img class="hero-tv" src="./iptv-hero.jpeg" alt="Netmix IPTV">
+       </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap divider"></div>
+
+<section id="diferenciais">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="kicker">Diferenciais técnicos</div>
+      <h2>Feito para não travar o seu momento</h2>
+      <p>Infraestrutura pensada para entregar imagem estável do primeiro ao último minuto.</p>
+    </div>
+    <div class="features">
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><rect x="3" y="4" width="18" height="6" rx="1.5"/><rect x="3" y="14" width="18" height="6" rx="1.5"/><circle cx="7" cy="7" r=".8" fill="currentColor" stroke="none"/><circle cx="7" cy="17" r=".8" fill="currentColor" stroke="none"/></svg>
+        </div>
+        <h3>Servidores dedicados</h3>
+        <p>Estrutura própria com capacidade reservada, garantindo estabilidade contínua mesmo em horários de alta demanda.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        </div>
+        <h3>Catálogo atualizado</h3>
+        <p>Milhares de opções entre filmes, séries e canais de TV, com novidades adicionadas constantemente.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><rect x="2" y="4" width="14" height="10" rx="1.5"/><path d="M7 18h4"/><circle cx="20" cy="8" r="2"/><rect x="17" y="12" width="6" height="9" rx="1.5"/></svg>
+        </div>
+        <h3>Compatibilidade universal</h3>
+        <p>Funciona em Smart TVs, smartphones, tablets e computadores — assista onde e como preferir.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap divider"></div>
+
+<section id="oferta">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="kicker">Plano único</div>
+      <h2>Um preço justo, tudo incluído</h2>
+      <p>Sem taxas escondidas, sem fidelidade. Cancele quando quiser.</p>
+    </div>
+    <div class="offer-wrap">
+      <div class="offer-card">
+        <span class="offer-badge">Mais escolhido</span>
+        <h3>Plano Mensal Completo</h3>
+        <div class="price"><span class="cents">R$</span><span class="num">29,90</span></div>
+        <div class="price-sub">por mês · acesso completo à plataforma</div>
+        <ul class="offer-list">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span>Catálogo completo de <b>filmes, séries e TV</b></span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span><b>Transmissão estável</b>, sem travamentos</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span>Compatível com <b>Smart TV, celular e PC</b></span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span>Suporte para configuração inclusa</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span><b>2 horas grátis</b> antes de assinar</span></li>
+        </ul>
+        <a class="btn btn-primary btn-block" href="https://wa.me/5527992874891?text=Ol%C3%A1,%20quero%20solicitar%20meu%20acesso%20demonstrativo%20de%202%20horas%20da%20Netmix!" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3l14 9-14 9V3z"/></svg>
+          Quero meu acesso agora
+        </a>
+        <div class="offer-foot">Atendimento e ativação via WhatsApp</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap divider"></div>
+
+<section id="como-funciona">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="kicker">Como funciona</div>
+      <h2>Do pedido à primeira sessão em minutos</h2>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h3>Solicite o acesso</h3>
+        <p>Clique no botão e envie sua solicitação de teste de 2 horas diretamente pelo WhatsApp.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h3>Configure em minutos</h3>
+        <p>Nossa equipe te acompanha na configuração no seu dispositivo, com suporte em tempo real.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h3>Aproveite o conteúdo</h3>
+        <p>Acesse o catálogo completo e comece a assistir imediatamente, sem complicação.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo"><span class="net">Net</span>mix</div>
+        <p class="footer-note" style="margin-top:8px;">Um mix de filmes, séries e TV. Plataforma de transmissão de mídia digital sob demanda.</p>
+      </div>
+      <div class="compat-tags">
+        <span>Smart TV</span>
+        <span>Android</span>
+        <span>iOS</span>
+        <span>Windows</span>
+        <span>macOS</span>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Netmix. Todos os direitos reservados.</span>
+      <span>Requer conexão estável à internet para melhor experiência.</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
